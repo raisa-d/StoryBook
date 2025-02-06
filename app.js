@@ -1,4 +1,5 @@
 // IMPORTS
+const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
@@ -25,6 +26,9 @@ app.engine('.hbs', handlebars.engine({
     extname: '.hbs'
 }));
 app.set('view engine', '.hbs');
+
+// Static folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 /* ======
 ROUTES 
