@@ -4,10 +4,15 @@ const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const handlebars = require('express-handlebars');
+const session = require('express-session');
+const passport = require('passport');
 const connectDB = require('./config/db.js');
 
-// load config file
+// Load config
 dotenv.config({path: './config/config.env'})
+
+// Passport Config
+require('./config/passport.js')(passport);
 
 /* ======
 VARIABLES 
@@ -27,6 +32,17 @@ app.engine('.hbs', handlebars.engine({
 }));
 app.set('view engine', '.hbs');
 
+// Sessions middleware
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false, // don't want to save a session if nothing was modified
+    saveUninitialized: false // don't create a session until something is stored
+}));
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -34,6 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 ROUTES 
 ====== */
 app.use('/', require('./routes/index'));
+app.use('/auth', require('./routes/auth'));
 
 // connect to database
 connectDB(uri);
