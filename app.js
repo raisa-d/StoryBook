@@ -28,8 +28,17 @@ MIDDLEWARE
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(morgan('dev'));
+
+// Handlebars Helpers
+const { formatDate, stripTags, truncate } = require('./helpers/hbs.js');
+
 // Handlebars
 app.engine('.hbs', handlebars.engine({
+    helpers: {
+        formatDate,
+        stripTags,
+        truncate
+    },
     defaultLayout: 'main',
     extname: '.hbs'
 }));
