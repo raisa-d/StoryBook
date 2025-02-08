@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { ensureAuth, ensureGuest } = require('../middleware/auth');
+const User = require('../models/User');
+const Story = require('../models/Story');
 
 /* ======
 ROUTES
@@ -15,8 +17,18 @@ router.get('/', ensureGuest, (req, res) => {
 
 // @desc Dashboard
 // GET /dashboard
-router.get('/dashboard', ensureAuth, (req, res) => {
-    res.render('dashboard');
+router.get('/dashboard', ensureAuth, async (req, res) => {
+    try {
+        const stories = await Story.find({ user: req.user.id }).lean();
+        const user = await User.findById(req.user.id).select('firstName');
+        res.render('dashboard', {
+            name: user.firstName,
+            stories
+        });
+    } catch(err) {
+        console.error(err);
+        res.render('error/500');
+    };
 });
 
 module.exports = router;
