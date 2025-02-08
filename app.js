@@ -25,6 +25,8 @@ const uri = process.env.MONGO_URI;
 /* ======
 MIDDLEWARE 
 ====== */
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(morgan('dev'));
 // Handlebars
 app.engine('.hbs', handlebars.engine({
@@ -55,6 +57,7 @@ ROUTES
 ====== */
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
+app.use('/stories', require('./routes/stories'));
 
 // connect to database
 connectDB(uri);
