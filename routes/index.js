@@ -1,5 +1,4 @@
 const express = require('express');
-// create router
 const router = express.Router();
 
 /* ======
@@ -18,6 +17,5 @@ router.get('/', (req, res) => {
 router.get('/dashboard', (req, res) => {
     res.render('dashboard');
 });
-
 
 module.exports = router;

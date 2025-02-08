@@ -8,7 +8,7 @@ module.exports = function (passport) {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: '/auth/google/callback'
     },
-    async (accessToken, refreshToken, profile, db) => {
+    async (accessToken, refreshToken, profile, done) => {
         const newUser = {
             googleId: profile.id,
             displayName: profile.displayName,
@@ -21,19 +21,19 @@ module.exports = function (passport) {
             let user = await User.findOne({ googleId: profile.id });
 
             if(user) {
-                cb(null, user);
+                done(null, user);
             } else {
                 user = await User.create(newUser);
-                cb(null, user);
+                done(null, user);
             };
         } catch(err) {
             console.error(err);
         };
     }));
 
-    passport.serializeUser((user, db) => {
+    passport.serializeUser((user, done) => {
         process.nextTick(() => {
-          return db(null, {
+          return done(null, {
             id: user.id,
             username: user.username,
             picture: user.picture
@@ -41,7 +41,7 @@ module.exports = function (passport) {
         });
       });
       
-      passport.deserializeUser((user, db) => {
-        process.nextTick(() => db(null, user));
+      passport.deserializeUser((user, done) => {
+        process.nextTick(() => done(null, user));
       });
 };
