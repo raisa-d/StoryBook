@@ -30,19 +30,30 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Handlebars Helpers
-const { formatDate, stripTags, truncate } = require('./helpers/hbs.js');
-
-// Handlebars
-app.engine('.hbs', handlebars.engine({
-    helpers: {
+const {
+    formatDate,
+    stripTags,
+    truncate,
+    editIcon,
+    select,
+  } = require('./helpers/hbs')
+  
+  // Handlebars
+  app.engine(
+    '.hbs',
+    exphbs({
+      helpers: {
         formatDate,
         stripTags,
-        truncate
-    },
-    defaultLayout: 'main',
-    extname: '.hbs'
-}));
-app.set('view engine', '.hbs');
+        truncate,
+        editIcon,
+        select,
+      },
+      defaultLayout: 'main',
+      extname: '.hbs',
+    })
+  );
+  app.set('view engine', '.hbs');
 
 // Sessions middleware
 app.use(
@@ -50,13 +61,19 @@ app.use(
       secret: 'keyboard cat',
       resave: false,
       saveUninitialized: false,
-      store: MongoStore.create({mongoUrl: process.env.MONGO_URI,}),
+      store: MongoStore.create({mongoUrl: process.env.MONGO_URI}),
     })
 );
 
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Set global var
+app.use(function (req, res, next) {
+    res.locals.user = req.user || null;
+    next();
+});
 
 // Static folder
 app.use(express.static(path.join(__dirname, 'public')));
