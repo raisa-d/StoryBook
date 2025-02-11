@@ -3,7 +3,7 @@ const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-const handlebars = require('express-handlebars');
+const exphbs = require('express-handlebars');
 const session = require('express-session');
 const passport = require('passport');
 const MongoStore = require('connect-mongo');
@@ -38,22 +38,19 @@ const {
     select,
   } = require('./helpers/hbs')
   
-  // Handlebars
-  app.engine(
-    '.hbs',
-    exphbs({
-      helpers: {
-        formatDate,
-        stripTags,
-        truncate,
-        editIcon,
-        select,
-      },
-      defaultLayout: 'main',
-      extname: '.hbs',
-    })
-  );
-  app.set('view engine', '.hbs');
+// Handlebars
+app.engine('.hbs', exphbs.engine({
+  helpers: {
+    formatDate,
+    stripTags,
+    truncate,
+    editIcon,
+    select,
+  },
+  defaultLayout: 'main',
+  extname: '.hbs',
+}));
+app.set('view engine', '.hbs');
 
 // Sessions middleware
 app.use(
@@ -71,8 +68,8 @@ app.use(passport.session());
 
 // Set global var
 app.use(function (req, res, next) {
-    res.locals.user = req.user || null;
-    next();
+  res.locals.user = req.user || null;
+  next();
 });
 
 // Static folder
