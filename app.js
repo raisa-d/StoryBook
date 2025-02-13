@@ -65,6 +65,7 @@ app.engine('.hbs', exphbs.engine({
   defaultLayout: 'main',
   extname: '.hbs',
 }));
+
 app.set('view engine', '.hbs');
 
 // Sessions middleware
